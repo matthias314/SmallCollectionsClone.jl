@@ -2,7 +2,7 @@
 # PackedVector
 #
 
-import Base: ==, getindex, setindex, length, size, empty, iterate, rest, split_rest,
+import Base: ==, getindex, setindex, length, size, empty, iterate, rest,
     iszero, zero, +, -, *, convert
 
 export PackedVector, bits
@@ -180,7 +180,7 @@ end
 rest(v::PackedVector, w = v) = w
 
 if VERSION >= v"1.9"
-    @inline function split_rest(v::PackedVector, n::Int, w = v)
+    @inline function Base.split_rest(v::PackedVector, n::Int, w = v)
         m = length(w)-n
         @boundscheck (n >= 0 && m >= 0) || error("impossible number of elements requested")
         @inbounds w[1:m], w[m+1:end]
