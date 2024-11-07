@@ -16,6 +16,7 @@ SmallCollections
 AbstractFixedVector
 FixedVector
 MutableFixedVector
+bits(::AbstractFixedVector)
 fasthash(::AbstractFixedVector, ::UInt)
 setindex(::AbstractFixedVector, ::Any, ::Integer)
 addindex(::AbstractFixedVector, ::Any, ::Integer)
