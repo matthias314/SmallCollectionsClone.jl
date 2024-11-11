@@ -124,7 +124,7 @@ convert(::Type{SmallBitSet}, mask::Integer) = convert(SmallBitSet{UInt}, mask)
 @propagate_inbounds function _push(mask::U, iter) where U
     for n in iter
         @boundscheck if !isinteger(n) || n <= 0 || n > bitsize(U)
-                error("SmallBitSet{$U} can only contain integers between 1 and $(bitsize(U))")
+                error("SmallBitSet{", U, "} can only contain integers between 1 and $(bitsize(U))")
             end
         mask |= one(U) << (Int(n)-1)
     end
@@ -142,7 +142,7 @@ SmallBitSet{U}() where U = _SmallBitSet(zero(U))
 function SmallBitSet{U}(r::AbstractUnitRange{<:Integer}) where U
     r0, r1 = first(r), last(r)
     if r0 <= 0 || r1 > bitsize(U)
-        error("SmallBitSet{$U} can only contain integers between 1 and $(bitsize(U))")
+        error("SmallBitSet{", U, "} can only contain integers between 1 and $(bitsize(U))")
     end
     if r1 < r0
         _SmallBitSet(zero(U))

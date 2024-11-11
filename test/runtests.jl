@@ -1,4 +1,6 @@
-using Test, SmallCollections, BitIntegers
+using Test, SmallCollections, BitIntegers, JET
+
+isdotcall(expr) = Meta.isexpr(expr, :call) && first(string(expr.args[1])) == '.'
 
 macro test_inferred(expr, good, goodtype = missing)
     msg = """
@@ -9,14 +11,9 @@ macro test_inferred(expr, good, goodtype = missing)
         location:        $(something(__source__.file, :none)):$(__source__.line)
 
         """
+    test_jet = isdotcall(expr) ? :() : :(testresult = @test_opt $expr)
     quote
-        let good = $good, goodtype = $goodtype,
-                result = try
-                    @inferred($expr)
-                catch e
-                    printstyled($msg; bold = true, color = :magenta)
-                    rethrow(e)
-                end
+        let result = $expr, good = $good, goodtype = $goodtype
             if goodtype === missing
                 goodtype = typeof(good)
             elseif !(goodtype isa Type)
@@ -25,6 +22,9 @@ macro test_inferred(expr, good, goodtype = missing)
             testresult = @test isequal(result, good)
             if testresult isa Test.Pass
                 testresult = @test result isa goodtype
+            end
+            if testresult isa Test.Pass
+                $test_jet
             end
             testresult isa Test.Pass || printstyled($msg; bold = true, color = :magenta)
             result
