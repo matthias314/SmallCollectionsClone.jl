@@ -11,7 +11,11 @@ macro test_inferred(expr, good, goodtype = missing)
         location:        $(something(__source__.file, :none)):$(__source__.line)
 
         """
-    test_jet = isdotcall(expr) ? :() : :(testresult = @test_opt $expr)
+    test_jet = isdotcall(expr) ? :() : quote
+        if testresult isa Test.Pass
+            testresult = @test_call $expr
+        end
+    end
     quote
         let result = $expr, good = $good, goodtype = $goodtype
             if goodtype === missing
@@ -23,9 +27,7 @@ macro test_inferred(expr, good, goodtype = missing)
             if testresult isa Test.Pass
                 testresult = @test result isa goodtype
             end
-            if testresult isa Test.Pass
-                $test_jet
-            end
+            $test_jet
             testresult isa Test.Pass || printstyled($msg; bold = true, color = :magenta)
             result
         end
