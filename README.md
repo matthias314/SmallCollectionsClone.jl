@@ -1,6 +1,6 @@
 # SmallCollections.jl
 
-This is an update to the README file.
+This is an update to the README file. Again modified for the new branch.
 
 This Julia package defines three immutable collections types, `SmallVector`,
 `PackedVector` and `SmallBitSet`. They don't allocate and are often much faster
